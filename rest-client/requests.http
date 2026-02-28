@@ -1,0 +1,9 @@
+@URL_API = http://localhost:3000
+
+POST {{URL_API}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "email@exemplo.com",
+  "password": "123456"
+}
