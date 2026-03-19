@@ -1,14 +1,24 @@
 @URL_API = http://localhost:3000
 @JWT_TOKEN = {{loginUser.response.body.accessToken}}
 
+@UserTestEmail =  email@exemplo.com
+@UserTestPassword = 123456
+@UserTestName = teste
+
+@UserTestEmailPatch = email@exemplo.com.br
+@UserTestPasswordPatch = 1234567
+@UserTestNamePatch = example
+
+@SlugID = macaco-dos-chama-loose-hsyxs6
+@PostUUID = e0e4564d-83c9-4c2c-8ea7-349429c48328
 ### Login
 # @name loginUser
 POST {{URL_API}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "email@exemplo.com",
-  "password": "123456"
+  "email": "{{UserTestEmail}}",
+  "password": "{{UserTestPassword}}"
 }
 
 ### GetUser
@@ -22,9 +32,9 @@ POST {{URL_API}}/user
 Content-Type: application/json
 
 {
-  "email": "email@exemplo.com",
-  "password": "123456",
-  "name": "teste"
+  "email": "{{UserTestEmail}}",
+  "password": "{{UserTestPassword}}",
+  "name": "{{UserTestName}}"
 }
 
 ### UpdateUser
@@ -34,8 +44,8 @@ Content-Type: application/json
 Authorization: Bearer {{JWT_TOKEN}}
 
 {
-  "email": "email@exemplo.com",
-  "name": "example"
+  "email": "{{UserTestEmailPatch}}",
+  "name": "{{UserTestNamePatch}}"
 }
 
 ### Login
@@ -45,6 +55,49 @@ Content-Type: application/json
 Authorization: Bearer {{JWT_TOKEN}}
 
 {
-  "currentPassword": "1234567",
-  "newPassword": "123456"
+  "currentPassword": "{{UserTestPassword}}",
+  "newPassword": "{{UserTestPasswordPatch}}"
 }
+
+### GetOneUser
+# @name getOneUser
+GET {{URL_API}}/user/me
+Content-Type: application/json
+Authorization: Bearer {{JWT_TOKEN}}
+
+### DeleteOnUser
+# @name deleteOnUser
+DELETE {{URL_API}}/user/me
+Content-Type: application/json
+Authorization: Bearer {{JWT_TOKEN}}
+
+### CreatePost
+# @name createPost
+POST {{URL_API}}/post
+Content-Type: application/json
+Authorization: Bearer {{JWT_TOKEN}}
+
+{
+  "title": "macaco dos chama loose",
+  "excerpt": "faz o l caralho",
+  "content": "faz o l ricardo",
+  "coverImageUrl": "http://localhost"
+}
+
+### GetPostBySlug
+# @name getPostBySlug
+GET  {{URL_API}}/post/{{SlugID}}
+
+### GetMyPostById
+# @name getMyPostById
+GET  {{URL_API}}/post/me/{{PostUUID}}
+Authorization: Bearer {{JWT_TOKEN}}
+
+### GetAllMyPost
+# @name getAllMyPostById
+GET  {{URL_API}}/post/me
+Authorization: Bearer {{JWT_TOKEN}}
+
+### GetAllPost
+# @name getAllPosts
+GET  {{URL_API}}/post

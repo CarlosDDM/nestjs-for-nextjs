@@ -19,13 +19,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload) {
-    const user = await this.userService.findById(payload.sub);
-    const history = await this.userService.lastChangedPassword(payload.sub);
+    const [user, history] = await Promise.all([
+      this.userService.findById(payload.sub),
+      this.userService.lastChangedPassword(payload.sub),
+    ]);
 
-    if (
-      !user ||
-      (history && history.lastChangedPassword > new Date(payload.iat * 1000))
-    )
+    if (!user || (history && history.changedAt > new Date(payload.iat * 1000)))
       throw new UnauthorizedException('Usuário não autorizado');
 
     return user;

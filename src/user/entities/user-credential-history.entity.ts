@@ -19,8 +19,8 @@ export class UserCredentialHistory {
   @Column()
   type: string;
 
-  @CreateDateColumn({ name: 'last_changed_password' })
-  lastChangedPassword: Date;
+  @CreateDateColumn({ name: 'changed_at' })
+  changedAt: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

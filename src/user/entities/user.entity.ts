@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserCredentialHistory } from './user-credential-history.entity';
+import { Post } from 'src/post/entities/post.entity';
 
 @Entity('users')
 export class User {
@@ -30,4 +31,7 @@ export class User {
 
   @OneToMany(() => UserCredentialHistory, history => history.user)
   passwordHistories: UserCredentialHistory[];
+
+  @OneToMany(() => Post, post => post.author)
+  posts: Post[];
 }

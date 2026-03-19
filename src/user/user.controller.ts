@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
   UseGuards,
   Req,
@@ -28,16 +27,11 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
-  findOne(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
-    console.log(req.user);
-    return `Resposta chegou ${id}`;
+  @Get('me')
+  findOne(@Req() req: AuthenticatedRequest) {
+    const { id } = req.user;
+    return this.userService.findByOrFail({ id });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -60,8 +54,10 @@ export class UserController {
     return this.userService.updatePassword(id, updatePasswordDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Delete('me')
+  remove(@Req() req: AuthenticatedRequest) {
+    const { id } = req.user;
+    return this.userService.remove(id);
   }
 }

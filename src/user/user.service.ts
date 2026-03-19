@@ -35,12 +35,14 @@ export class UserService {
     if (existUser) throw new ConflictException('E-mail já existe');
   }
 
+  private async existUser(userData: Partial<User>) {
+    const existUser = await this.userRepository.existsBy(userData);
+
+    if (!existUser) throw new NotFoundException('Usuário não encontrado');
+  }
+
   async findByOrFail(userData: Partial<User>) {
-    const user = await this.userRepository.findOneByOrFail(userData);
-
-    if (!user) throw new NotFoundException('Usuário não encontrado');
-
-    return user;
+    return this.userRepository.findOneByOrFail(userData);
   }
 
   async create(createUserDto: CreateUserDto) {
@@ -50,19 +52,8 @@ export class UserService {
       hashedPassword: await this.hashingService.hash(createUserDto.password),
     };
 
-    try {
-      const created = await this.userRepository.save(newUser);
-      return created;
-    } catch (err) {
-      console.log(
-        `Não foi possivel slavar o usuário na base de dados, Error: ${err}`,
-      );
-      throw new BadRequestException();
-    }
-  }
-
-  findAll() {
-    return `This action returns all user`;
+    const created = await this.userRepository.save(newUser);
+    return created;
   }
 
   findById(id: string) {
@@ -104,8 +95,10 @@ export class UserService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    await this.existUser({ id });
+
+    return await this.userRepository.delete({ id });
   }
 
   findByEmail(email: string) {
