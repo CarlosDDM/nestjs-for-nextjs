@@ -1,8 +1,13 @@
+.PHONY: logs down up rebuild shell
+
 logs:
 	docker logs -f app
 
-down app:
+down:
 	docker compose down
 
-start app:
+up:
 	docker compose up -d
+
+rebuild:
+	docker compose up -d --build
