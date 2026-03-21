@@ -9,8 +9,8 @@
 @UserTestPasswordPatch = 1234567
 @UserTestNamePatch = example
 
-@SlugID = macaco-dos-chama-loose-hsyxs6
-@PostUUID = e0e4564d-83c9-4c2c-8ea7-349429c48328
+@SlugID = macaco-dos-chama-loose-xaovwa
+@PostUUID = 70505059-ef36-477e-a1df-e162557ecbf9
 ### Login
 # @name loginUser
 POST {{URL_API}}/auth/login
@@ -80,8 +80,7 @@ Authorization: Bearer {{JWT_TOKEN}}
 {
   "title": "macaco dos chama loose",
   "excerpt": "faz o l caralho",
-  "content": "faz o l ricardo",
-  "coverImageUrl": "http://localhost"
+  "content": "faz o l ricardo"
 }
 
 ### GetPostBySlug
@@ -94,10 +93,40 @@ GET  {{URL_API}}/post/me/{{PostUUID}}
 Authorization: Bearer {{JWT_TOKEN}}
 
 ### GetAllMyPost
-# @name getAllMyPostById
+# @name getAllMyPost
 GET  {{URL_API}}/post/me
 Authorization: Bearer {{JWT_TOKEN}}
 
 ### GetAllPost
 # @name getAllPosts
 GET  {{URL_API}}/post
+
+### UpdatePost
+# @name PatchPost
+PATCH {{URL_API}}/post/me/{{PostUUID}}
+Content-Type: application/json
+Authorization: Bearer {{JWT_TOKEN}}
+
+{
+  "coverImageUrl": "http://localhost",
+  "published": true
+}
+
+### DeletePost
+# @name DeletePost
+Delete {{URL_API}}/post/me/{{PostUUID}}
+Content-Type: application/json
+Authorization: Bearer {{JWT_TOKEN}}
+
+### uploadImage
+# @name UploadImage
+POST {{URL_API}}/file/upload
+Content-Type: multipart/form-data; boundary=----FormBoundary
+Authorization: Bearer {{JWT_TOKEN}}
+
+------FormBoundary
+Content-Disposition: form-data; name="file"; filename="comment_photo.jpg"
+Content-Type: image/jpeg
+
+< ./comment_photo.jpg
+------FormBoundary--

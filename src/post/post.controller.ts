@@ -44,9 +44,9 @@ export class PostController {
     return this.postService.findAllOwned(authorId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postService.findOne({ id });
+  @Get(':slug')
+  findOne(@Param('slug') slug: string) {
+    return this.postService.findOne({ slug });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -56,13 +56,21 @@ export class PostController {
     return this.postService.findOneOwned(id, authorId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto);
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/:id')
+  update(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
+    const { id: authorId } = req.user;
+    return this.postService.update(id, authorId, updatePostDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Delete('me/:id')
+  remove(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
+    const { id: authorId } = req.user;
+    return this.postService.remove(id, authorId);
   }
 }

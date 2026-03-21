@@ -6,6 +6,8 @@ import { PostModule } from './post/post.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { FileModule } from './file/file.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         synchronize: true, //TODO disable when go to production
       }),
     }),
+    FileModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

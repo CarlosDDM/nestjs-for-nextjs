@@ -11,6 +11,7 @@ import { Post } from './entities/post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createSlugFromText } from 'src/common/utils/create-slug-from-title.utils';
 import { generateRandomSuffix } from 'src/common/utils/generate-random-suffix.utils';
+import { validateVoidObject } from 'src/common/utils/validate-void-object.utils';
 
 @Injectable()
 export class PostService {
@@ -33,13 +34,21 @@ export class PostService {
   }
 
   findAll() {
-    return this.postRepository.find({ relations: ['author'] });
+    return this.postRepository.find({
+      relations: ['author'],
+      order: {
+        createdAt: 'DESC',
+      },
+      where: {
+        published: true,
+      },
+    });
   }
 
   findOne(partialPost: Partial<Post>) {
     return this.postRepository
       .findOneOrFail({
-        where: partialPost,
+        where: { ...partialPost, published: true },
         relations: ['author'],
       })
       .catch((err: unknown) => {
@@ -67,14 +76,26 @@ export class PostService {
     return this.postRepository.find({
       where: { authorId },
       relations: ['author'],
+      order: {
+        createdAt: 'DESC',
+      },
     });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: string, authorId: string, updatePostDto: UpdatePostDto) {
+    validateVoidObject(updatePostDto);
+    const post = await this.findOneOwned(id, authorId);
+
+    await this.postRepository.update(post.id, updatePostDto).catch(() => {
+      throw new BadRequestException('Não foi possivel atualizar o post');
+    });
+
+    return this.findOneOwned(id, authorId);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: string, authorId: string) {
+    const post = await this.findOneOwned(id, authorId);
+
+    return this.postRepository.remove(post);
   }
 }
