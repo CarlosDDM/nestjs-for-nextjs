@@ -8,12 +8,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileModule } from './file/file.module';
 import { StorageModule } from './storage/storage.module';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 
 @Module({
   imports: [
     UserModule,
     PostModule,
     AuthModule,
+    FileModule,
+    StorageModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -30,10 +36,27 @@ import { StorageModule } from './storage/storage.module';
         synchronize: true, //TODO disable when go to production
       }),
     }),
-    FileModule,
-    StorageModule,
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 10000,
+          limit: 10,
+          blockDuration: 5000,
+        },
+      ],
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CustomThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

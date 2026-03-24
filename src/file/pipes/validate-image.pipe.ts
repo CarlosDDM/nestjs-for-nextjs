@@ -12,17 +12,23 @@ export class ValidateImagePipe implements PipeTransform {
 
   private readonly allowedMimeType = ['image/jpeg', 'image/png', 'image/webp'];
 
-  transform(value: Express.Multer.File, metadata: ArgumentMetadata) {
+  transform(file: Express.Multer.File, metadata: ArgumentMetadata) {
     const maxSize = Number(this.configService.getOrThrow('IMAGE_SIZE'));
 
-    if (value.size > maxSize) {
-      throw new BadRequestException('Arquivo muito grande');
-    }
+    if (!file || file.size === 0)
+      throw new BadRequestException('Nenhum arquivo enviado');
 
-    if (!this.allowedMimeType.includes(value.mimetype)) {
+    if (
+      !file.mimetype.startsWith('images/') ||
+      !this.allowedMimeType.includes(file.mimetype)
+    ) {
       throw new BadRequestException('Somente imagens são permitidas');
     }
 
-    return value;
+    if (file.size > maxSize) {
+      throw new BadRequestException('Arquivo muito grande');
+    }
+
+    return file;
   }
 }

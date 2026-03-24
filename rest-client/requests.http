@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 
 ### GetUser
-GET {{URL_API}}/user/123
+GET {{URL_API}}/user/me
 Content-Type: application/json
 Authorization: Bearer {{JWT_TOKEN}}
 
