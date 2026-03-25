@@ -1,3 +1,5 @@
 .docker
 node_modules
 dist
+/rest-client
+Makefile

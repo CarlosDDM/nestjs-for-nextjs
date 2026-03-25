@@ -1,16 +1,20 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        - PORT=${PORT}
     container_name: app
     ports:
-      - 3000:3000
+      - ${PORT}:${PORT}
     volumes:
-      - ./:/app
+      - appData:/app
     restart: unless-stopped
     depends_on:
       - postgres
     networks:
       - app-nest
+
   postgres:
     container_name: postgres-nest
     image: postgres:17.9-trixie
@@ -19,12 +23,18 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - ./.docker/pgData:/var/lib/postgresql/data
+      - pgData:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
       - app-nest
     ports:
-      - 5432:5432
+      - ${DB_PORT}:${DB_PORT}
 networks:
   app-nest:
     driver: bridge
+
+volumes:
+  pgData:
+    driver: local
+  appData:
+    driver: local

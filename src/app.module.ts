@@ -33,7 +33,7 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
         password: configService.getOrThrow<string>('POSTGRES_PASSWORD'),
         database: configService.getOrThrow<string>('POSTGRES_DB'),
         autoLoadEntities: true,
-        synchronize: true, //TODO disable when go to production
+        synchronize: false,
       }),
     }),
     ThrottlerModule.forRoot({
