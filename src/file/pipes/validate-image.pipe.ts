@@ -19,7 +19,7 @@ export class ValidateImagePipe implements PipeTransform {
       throw new BadRequestException('Nenhum arquivo enviado');
 
     if (
-      !file.mimetype.startsWith('images/') ||
+      !file.mimetype.startsWith('image/') ||
       !this.allowedMimeType.includes(file.mimetype)
     ) {
       throw new BadRequestException('Somente imagens são permitidas');
