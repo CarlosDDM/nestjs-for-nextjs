@@ -10,7 +10,7 @@ services:
     ports:
       - ${PORT}:${PORT}
     restart: unless-stopped
-    command: ["/bin/sh", "-c", "sleep 10 && npm run start:prod"]
+    command: ["/bin/sh", "-c", "npm run start:prod"]
     depends_on:
       postgres:
         condition: service_healthy
